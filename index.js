@@ -101,6 +101,15 @@ function getRailwayUrl() {
   return "https://7daymoneyflowreset-production.up.railway.app";
 }
 
+// Function to get the dynamic Replit URL (kept for compatibility)
+function getReplitUrl() {
+  if (process.env.REPL_SLUG && process.env.REPL_OWNER) {
+    return `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`;
+  }
+  // Fallback for local testing or if env vars are not set
+  return `http://localhost:${process.env.PORT || 5000}`;
+}
+
 // Enhanced bot initialization for webhook mode
 async function initBotWebhook() {
   console.log("Starting bot initialization process for webhooks...");
