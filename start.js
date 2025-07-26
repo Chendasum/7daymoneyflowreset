@@ -120,32 +120,33 @@ async function handle(msg, bot) {
   console.log(`Start command triggered by user ${userId} at ${new Date()}`);
 
   try {
-    // Perform database operations in parallel for better performance:
-    // 1. Find and update user information (or create new user if not exists)
-    // 2. Find and update user's progress (or create new progress entry if not exists)
+    // FIXED: Use correct database field names for Railway/PostgreSQL compatibility
     const [user, userProgress] = await Promise.all([
       User.findOneAndUpdate(
-        { telegramId: userId },
+        { telegram_id: userId }, // FIXED: Use telegram_id instead of telegramId
         {
-          telegramId: userId,
+          telegram_id: userId, // FIXED: Use telegram_id instead of telegramId
           username: msg.from.username,
-          firstName: msg.from.first_name,
-          lastName: msg.from.last_name,
-          lastActive: new Date(), // Update last active timestamp
+          first_name: msg.from.first_name, // FIXED: Use first_name instead of firstName
+          last_name: msg.from.last_name, // FIXED: Use last_name instead of lastName
+          last_active: new Date(), // FIXED: Use last_active instead of lastActive
         },
         { upsert: true, new: true }, // upsert: create if not exists; new: return updated document
       ),
       Progress.findOneAndUpdate(
-        { userId: userId },
-        { userId: userId },
+        { user_id: userId }, // FIXED: Use user_id instead of userId
+        { user_id: userId }, // FIXED: Use user_id instead of userId
         { upsert: true, new: true },
       ),
     ]);
 
+    // FIXED: Use correct payment check for PostgreSQL boolean values
+    const isPaid = user?.is_paid === true || user?.is_paid === 't';
+
     // Conditional logic based on user's payment status
-    if (user.isPaid) {
-      // If user is paid, check if they have completed Day 0 preparation (readyForDay1)
-      if (!userProgress || !userProgress.readyForDay1) {
+    if (isPaid) {
+      // FIXED: Use correct field name for ready_for_day_1
+      if (!userProgress || !userProgress.ready_for_day_1) {
         // Send the preparation message for paid users
         await sendLongMessage(
           bot,
@@ -187,7 +188,7 @@ async function handle(msg, bot) {
     // More specific error messages based on error type
     if (error.code === "ETELEGRAM") {
       errorMessage = "បញ្ហាទំនាក់ទំនងជាមួយ Telegram ។ សូមព្យាយាមម្តងទៀត។";
-    } else if (error.name === "MongoError") {
+    } else if (error.name === "PostgresError") { // FIXED: Use PostgresError instead of MongoError
       errorMessage = "បញ្ហាទិន្នន័យ។ សូមព្យាយាមម្តងទៀត។";
     }
 
