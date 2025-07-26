@@ -95,13 +95,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Function to get the dynamic Replit URL
-function getReplitUrl() {
-  if (process.env.REPL_SLUG && process.env.REPL_OWNER) {
-    return `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`;
-  }
-  // Fallback for local testing or if env vars are not set
-  return `http://localhost:${process.env.PORT || 5000}`;
+// Function to get the Railway URL
+function getRailwayUrl() {
+  // Always return Railway domain for production
+  return "https://7daymoneyflowreset-production.up.railway.app";
 }
 
 // Enhanced bot initialization for webhook mode
@@ -142,7 +139,7 @@ async function initBotWebhook() {
     }
 
     // 3. Construct the webhook URL - CORRECT RAILWAY DOMAIN
-    const correctDomain = "https://7daymoneyflowreset-production.up.railway.app";
+    const correctDomain = getRailwayUrl();
     const actualWebhookUrl = `${correctDomain}/bot${process.env.BOT_TOKEN}`;
 
     // Debug: Show which domain we're using
