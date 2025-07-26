@@ -141,8 +141,8 @@ async function initBotWebhook() {
       );
     }
 
-    // 3. Construct the webhook URL - FORCE CORRECT DOMAIN (not .repl.co)
-    const correctDomain = "https://money-flow-tracker-chendasum168.replit.app";
+    // 3. Construct the webhook URL - CORRECT RAILWAY DOMAIN
+    const correctDomain = "https://7daymoneyflowreset-production.up.railway.app";
     const actualWebhookUrl = `${correctDomain}/bot${process.env.BOT_TOKEN}`;
 
     // Debug: Show which domain we're using
